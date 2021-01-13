@@ -2,3 +2,5 @@
 model.mwb
 .idea
 trash.py
+__pycache__
+.bak
