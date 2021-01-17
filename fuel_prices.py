@@ -2,7 +2,7 @@
 """This module returns index for transportation"""
 
 import re
-from get_response import get_url_response
+from libs import get_url_response
 
 URL_TO_PARSE_FUEL = "https://auto.mail.ru/fuel/"
 URL_TO_PARSE_MCD_TICKETS = "https://troikarta.ru/tarify/mcd/"

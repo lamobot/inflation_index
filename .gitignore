@@ -6,3 +6,8 @@ __pycache__
 .bak
 /tmp
 model.mwb.bak
+*.sql
+*.log
+links
+config.py
+

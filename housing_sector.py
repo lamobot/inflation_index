@@ -2,7 +2,7 @@
 """This module returns index for housing sector"""
 
 import tabula
-from get_response import get_url_response
+from libs import get_url_response
 
 
 FILENAME = 'tmp/bill.pdf'
