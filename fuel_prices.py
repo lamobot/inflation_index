@@ -2,10 +2,7 @@
 """This module returns index for transportation"""
 
 import re
-from libs import get_url_response
-
-URL_TO_PARSE_FUEL = "https://auto.mail.ru/fuel/"
-URL_TO_PARSE_MCD_TICKETS = "https://troikarta.ru/tarify/mcd/"
+from libs import write_logs
 
 
 def get_fuel_price(response: object, fuel_type: str = 'ai95') -> float:
@@ -24,6 +21,7 @@ def get_fuel_price(response: object, fuel_type: str = 'ai95') -> float:
     else:
         raise ValueError('We can parse only \"ai95\" or \"dt\"')
     fuel_price = re.search(search_string, str(result_string))
+    write_logs('Fuel price index has been calculated successfully', 'INFO')
     return float(fuel_price.group(0).split(',')[0].split(':')[1])
 
 
@@ -35,17 +33,5 @@ def get_mcd_ticket_price(response: object) -> float:
     """
     pattern = re.compile(r'«Пригород» – ')
     result_string = response.find(text=pattern)
+    write_logs('MCD price index has been calculated successfully', 'INFO')
     return float(re.findall(r'\d+', str(result_string.next_element))[0])
-
-
-def count_index_points() -> float:
-    """
-    This function returns transportation index points
-    :return: TIP
-    """
-    return get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'ai95') + \
-        get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'dt') + \
-        get_mcd_ticket_price(get_url_response(URL_TO_PARSE_MCD_TICKETS))
-
-
-print(count_index_points())
