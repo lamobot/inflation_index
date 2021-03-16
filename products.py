@@ -2,45 +2,63 @@
 """This module returns index for housing sector"""
 
 from libs import get_url_response, write_logs
+import csv
 
 
-def get_product_index_from_globus(links: list) -> float:
-    """
-    Return Globus product index
-    :param links: list of globus links
-    :return: globus product index in float format
-    """
-    product_index_cost = 0.0
-    for link in links:
-        soup = get_url_response(link)
-        if soup is None:
-            write_logs('unavailable product - {}'.format(link), 'ERROR')
-            raise Exception('unavailable product - ' + link)
+def get_product_price_from_globus(link: str, shop: str) -> float:
+    soup = get_url_response(link)
+    if soup is None:
+        write_logs('unavailable product - {}'.format(link), 'ERROR')
+        raise Exception('unavailable product - ' + link)
+    if shop == 'globus':
         price = float(soup.select_one("div.item-card__content--right span.item-price__rub").text
                       + '.' +
                       soup.select_one("div.item-card__content--right span.item-price__kop").text)
-        product_index_cost += price
-    write_logs('Product index of Globus shop has been calculated successfully', 'INFO')
-    return round(product_index_cost, 2)
-
-
-def get_product_index_from_vprok(links: list) -> float:
-    """
-    Return Perekrestok product index
-    :param links: list of perekrestok links
-    :return: perekrestok product index in float format
-    """
-    product_index_cost = 0.0
-    for link in links:
-        soup = get_url_response(link)
-        if soup is None:
-            write_logs('unavailable product - {}'.format(link), 'ERROR')
-            raise Exception('unavailable product - ' + link)
-        if soup.select_one("div.xf-product-new__temporarily-out-of-stock"):
-            write_logs('The product is temporarily out of stock - {}'.format(link), 'ERROR')
-            raise Exception('The product is temporarily out of stock - ' + link)
+    if shop == 'vprok':
         price = float(soup.select_one("span.js-price-rouble").text +
                       soup.select_one("span.js-price-penny").text.replace(',', '.'))
-        product_index_cost += price
-    write_logs('Product index of Vptok shop has been calculated successfully', 'INFO')
-    return round(product_index_cost, 2)
+    return price
+
+
+def get_product_dict_from_csv(filename: str, shop: str) -> dict:
+    product_dict = {}
+    input_file = csv.DictReader(open(filename))
+    for row in input_file:
+        if row['shop'] == shop:
+            product_price = get_product_price_from_globus(row['product_url'], shop)
+            product_dict[row['product_name']] = product_price
+    return product_dict
+
+
+def calculate_index(shop1: dict, shop2: dict, shop3: dict) -> dict:
+    """
+    This function calculates average price of products between three shops
+    :param shop1: First e-shop
+    :param shop2: Second e-shop
+    :param shop3: Third e-shop
+    :return: dict of products and their prices
+    """
+    product_dict = {}
+    product_set = set()
+    product_set.update(set(shop1.keys()), set(shop2.keys()), set(shop3.keys()))
+    for product_name in product_set:
+        if product_name in shop1.keys() and product_name in shop2.keys() and product_name in shop3.keys():
+            product_dict[product_name] = round((shop1[product_name] + shop2[product_name] + shop3[product_name]) / 3)
+        elif product_name in shop1.keys() and product_name in shop2.keys():
+            product_dict[product_name] = round((shop1[product_name] + shop2[product_name]) / 2)
+        elif product_name in shop1.keys() and product_name in shop3.keys():
+            product_dict[product_name] = round((shop1[product_name] + shop3[product_name]) / 2)
+        elif product_name in shop2.keys() and product_name in shop3.keys():
+            product_dict[product_name] = round((shop2[product_name] + shop3[product_name]) / 2)
+        elif product_name in shop1.keys():
+            product_dict[product_name] = shop1[product_name]
+        elif product_name in shop2.keys():
+            product_dict[product_name] = shop2[product_name]
+        elif product_name in shop3.keys():
+            product_dict[product_name] = shop3[product_name]
+        else:
+            product_dict["key"] = "bug"
+    return product_dict
+
+print(get_product_dict_from_csv('list.csv', 'vprok'))
+print(get_product_dict_from_csv('list.csv', 'globus'))
