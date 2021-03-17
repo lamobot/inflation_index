@@ -3,6 +3,8 @@
 
 import re
 from libs import write_logs
+from libs import get_url_response
+from config import *
 
 
 def get_fuel_price(response: object, fuel_type: str = 'ai95') -> float:
@@ -35,3 +37,12 @@ def get_mcd_ticket_price(response: object) -> float:
     result_string = response.find(text=pattern)
     write_logs('MCD price index has been calculated successfully', 'INFO')
     return float(re.findall(r'\d+', str(result_string.next_element))[0])
+
+
+def calculate_fuel_index():
+    return get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'ai95') * FUEL_COUNTER_LITTERS_PER_MONTH + \
+     get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'dt') * FUEL_COUNTER_LITTERS_PER_MONTH + \
+     get_mcd_ticket_price(get_url_response(URL_TO_PARSE_MCD_TICKETS) * TRAIN_TICKETS_COUNTER_PER_MONTH)
+
+
+print(calculate_fuel_index())
