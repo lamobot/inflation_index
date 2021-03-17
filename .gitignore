@@ -8,5 +8,4 @@ __pycache__
 model.mwb.bak
 *.log
 links
-config.py
-config
+
