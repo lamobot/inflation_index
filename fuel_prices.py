@@ -40,9 +40,9 @@ def get_mcd_ticket_price(response: object) -> float:
 
 
 def calculate_fuel_index():
-    return get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'ai95') * FUEL_COUNTER_LITTERS_PER_MONTH + \
-     get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'dt') * FUEL_COUNTER_LITTERS_PER_MONTH + \
-     get_mcd_ticket_price(get_url_response(URL_TO_PARSE_MCD_TICKETS) * TRAIN_TICKETS_COUNTER_PER_MONTH)
+    return get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'ai95') * FUEL_LITTERS_PER_MONTH + \
+     get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'dt') * FUEL_LITTERS_PER_MONTH + \
+     get_mcd_ticket_price(get_url_response(URL_TO_PARSE_MCD_TICKETS) * TRAIN_TICKETS_PER_MONTH)
 
 
 print(calculate_fuel_index())
