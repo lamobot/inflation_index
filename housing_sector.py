@@ -2,7 +2,9 @@
 """This module returns index for housing sector"""
 
 import tabula
-from config import FILENAME
+from libs import get_url_response
+from config import FILENAME, COLD_WATER_AVERAGE_CONSUMPTION, HOT_WATER_AVERAGE_CONSUMPTION, \
+    URL_TO_PARSE_ELECTRICITY_PRICE
 
 
 def get_electricity_price(response: object) -> float:
@@ -16,31 +18,39 @@ def get_electricity_price(response: object) -> float:
 
 def get_housing_service_price(filename: str) -> float:
     """
-    Return price of other housing service
+    This functions returns average price of housing sector
     :param filename
     :return: price of other housing service in float format
     """
     table = tabula.read_pdf(filename, pages=1, pandas_options={'header': None})
     tbl = table[2]
-    dct = {}
+    housing_service_cost_sum = 0.0
+
+    def cost_sum(cost_volume: str, cost_tariff: str, avg_counter: int = 1) -> float:
+        """
+        This function converts tabula series to float
+        :param cost_volume:
+        :param cost_tariff:
+        :param avg_counter:
+        :return: float cost_sum
+        """
+        if avg_counter == 1:
+            return round(float(cost_volume.replace(',', '.')) * float(cost_tariff.replace(',', '.')) * avg_counter, 2)
+        return round(float(cost_tariff.replace(',', '.')) * avg_counter, 2)
+
     for item in tbl.values:
-        # dct[item[0]] = [float(item[1].replace(',', '.')), float(item[3].replace(',', '.'))]
-        if item[1] == '43,400':
-            dct[item[0]] = round(float(item[1].replace(',', '.')) * float(item[3].replace(',', '.')), 2)
-        elif item[0] == 'Телеантенна':
-            dct[item[0]] = round(float(item[3].replace(',', '.')), 2)
+        if item[0] in ('Техобслуживание', 'Отопление', 'Телеантенна', 'Капитальный ремонт', 'Вывоз и утилизация ТКО'):
+            housing_service_cost_sum += cost_sum(item[1], item[3])
         elif item[0] == 'ГВС':
-            dct[item[0]] = round(float(item[3].replace(',', '.')) * 3, 2)
-
-    print(dct)
-
-
-    # for item in tbl.values[10:18]:
-    #     print(str(item).strip().split(' '))
-    # for k, v in tbl[['Unnamed: 0', 'Unnamed: 2']][10:18].values:
-    #     dct[k] = v
-    # print(dct)
+            housing_service_cost_sum += cost_sum(item[1], item[3], HOT_WATER_AVERAGE_CONSUMPTION)
+        elif item[0] == 'ХВС':
+            housing_service_cost_sum += cost_sum(item[1], item[3], COLD_WATER_AVERAGE_CONSUMPTION)
+        elif item[0] == 'Водоотведение':
+            housing_service_cost_sum += cost_sum(item[1], item[3], (HOT_WATER_AVERAGE_CONSUMPTION +
+                                                                    COLD_WATER_AVERAGE_CONSUMPTION))
+    return round(housing_service_cost_sum, 2)
 
 
 if __name__ == "__main__":
-    get_housing_service_price(FILENAME)
+    print(get_housing_service_price(FILENAME))
+    print(get_electricity_price(get_url_response(URL_TO_PARSE_ELECTRICITY_PRICE)))
