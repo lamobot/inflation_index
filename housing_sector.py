@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """This module returns index for housing sector"""
 
-import tabula
+from tabula import read_pdf
 from libs import get_url_response
-from config import FILENAME, COLD_WATER_AVERAGE_CONSUMPTION, HOT_WATER_AVERAGE_CONSUMPTION, \
-    URL_TO_PARSE_ELECTRICITY_PRICE
+from config import HOUSING_SECTOR_BILL_FILE, COLD_WATER_AVERAGE_CONSUMPTION, HOT_WATER_AVERAGE_CONSUMPTION, \
+    URL_TO_PARSE_ELECTRICITY_PRICE, ELECTRICITY_COUNTER
 
 
 def get_electricity_price(response: object) -> float:
@@ -13,7 +13,7 @@ def get_electricity_price(response: object) -> float:
     :param response: need function get_url_response from get_response module
     :return: electricity price in float format
     """
-    return float(response.find(class_="d-table-num-left").text.replace(',', '.'))
+    return float(response.find(class_="d-table-num-left").text.replace(',', '.')) * ELECTRICITY_COUNTER
 
 
 def get_housing_service_price(filename: str) -> float:
@@ -22,7 +22,7 @@ def get_housing_service_price(filename: str) -> float:
     :param filename
     :return: price of other housing service in float format
     """
-    table = tabula.read_pdf(filename, pages=1, pandas_options={'header': None})
+    table = read_pdf(filename, pages=1, pandas_options={'header': None})
     tbl = table[2]
     housing_service_cost_sum = 0.0
 
@@ -51,6 +51,15 @@ def get_housing_service_price(filename: str) -> float:
     return round(housing_service_cost_sum, 2)
 
 
+def calculate_housing_sector_index() -> float:
+    """
+    This function calculates housing sector index and returns sum of electricity and housing service prices
+    """
+    return get_housing_service_price(HOUSING_SECTOR_BILL_FILE) + \
+        get_electricity_price(get_url_response(URL_TO_PARSE_ELECTRICITY_PRICE))
+
+
 if __name__ == "__main__":
-    print(get_housing_service_price(FILENAME))
+    print(get_housing_service_price(HOUSING_SECTOR_BILL_FILE))
     print(get_electricity_price(get_url_response(URL_TO_PARSE_ELECTRICITY_PRICE)))
+    print(calculate_housing_sector_index())

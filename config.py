@@ -1,5 +1,5 @@
 # Constants
-FILENAME = 'tmp/bill.pdf'
+HOUSING_SECTOR_BILL_FILE = 'tmp/bill.pdf'
 
 # URLs
 URL_TO_PARSE_FUEL = "https://auto.mail.ru/fuel/"
@@ -14,4 +14,5 @@ TRAIN_TICKETS_PER_MONTH: int = 41
 # Housing sector counts
 COLD_WATER_AVERAGE_CONSUMPTION: int = 7
 HOT_WATER_AVERAGE_CONSUMPTION: int = 3
+ELECTRICITY_COUNTER: int = 260
 

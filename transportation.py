@@ -38,10 +38,15 @@ def get_mcd_ticket_price(response: object) -> float:
     return float(re.findall(r'\d+', str(result_string.next_element))[0])
 
 
-def calculate_fuel_index():
-    return get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'ai95') * FUEL_LITTERS_PER_MONTH + \
-     get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'dt') * FUEL_LITTERS_PER_MONTH + \
-     get_mcd_ticket_price(get_url_response(URL_TO_PARSE_MCD_TICKETS) * TRAIN_TICKETS_PER_MONTH)
+def calculate_transportation_index() -> float:
+    """
+    This function calculates transportation index and returns sum of fuel and mcd tickets prices per month
+    """
+    return (get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'ai95') * FUEL_LITTERS_PER_MONTH) + \
+           (get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'dt') * FUEL_LITTERS_PER_MONTH) + \
+           (get_mcd_ticket_price(get_url_response(URL_TO_PARSE_MCD_TICKETS)) * TRAIN_TICKETS_PER_MONTH)
 
 
-print(calculate_fuel_index())
+if __name__ == "__main__":
+    print(calculate_transportation_index())
+
