@@ -25,17 +25,16 @@ def get_product_price(link: str, shop: str) -> float:
 
 
 def get_product_dict_from_csv(filename: str, shop: str) -> dict:
-    # TODO: counter
     product_dict = {}
     input_file = csv.DictReader(open(filename))
     for row in input_file:
-        if row['shop'] == shop:
+        if row['shop_name'] == shop:
             product_price = get_product_price(row['product_url'], shop)
-            product_dict[row['product_name']] = product_price
+            product_dict[row['product_name']] = product_price * int(row['counter'])
     return product_dict
 
 
-def calculate_index(shop1: dict, shop2: dict, shop3: dict) -> dict:
+def get_average_product_price(shop1: dict, shop2: dict, shop3: dict) -> dict:
     """
     This function calculates average price of products between three shops
     :param shop1: First e-shop
@@ -66,10 +65,17 @@ def calculate_index(shop1: dict, shop2: dict, shop3: dict) -> dict:
     return product_dict
 
 
-print(get_product_dict_from_csv('list.csv', 'vprok'))
-print(get_product_dict_from_csv('list.csv', 'globus'))
-print(get_product_dict_from_csv('list.csv', 'aushan'))
+def calculate_product_index() -> float:
+    """
+    This function calculates product index and returns average price of products from globus, aushan and vprok shops
+    """
+    product_index = 0.0
+    for price in get_average_product_price(get_product_dict_from_csv('list.csv', 'vprok'),
+                                           get_product_dict_from_csv('list.csv', 'globus'),
+                                           get_product_dict_from_csv('list.csv', 'aushan')).values():
+        product_index += price
+    return product_index
 
-print(calculate_index(get_product_dict_from_csv('list.csv', 'vprok'), get_product_dict_from_csv('list.csv', 'globus'),
-                get_product_dict_from_csv('list.csv', 'aushan')))
 
+if __name__ == '__main__':
+    print(calculate_product_index())
