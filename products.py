@@ -25,6 +25,7 @@ def get_product_price(link: str, shop: str) -> float:
 
 
 def get_product_dict_from_csv(filename: str, shop: str) -> dict:
+    # TODO: counter
     product_dict = {}
     input_file = csv.DictReader(open(filename))
     for row in input_file:
