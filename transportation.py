@@ -42,11 +42,10 @@ def calculate_transportation_index() -> float:
     """
     This function calculates transportation index and returns sum of fuel and mcd tickets prices per month
     """
-    return (get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'ai95') * FUEL_LITTERS_PER_MONTH) + \
-           (get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'dt') * FUEL_LITTERS_PER_MONTH) + \
-           (get_mcd_ticket_price(get_url_response(URL_TO_PARSE_MCD_TICKETS)) * TRAIN_TICKETS_PER_MONTH)
+    return round((get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'ai95') * FUEL_LITTERS_PER_MONTH) + \
+                 (get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'dt') * FUEL_LITTERS_PER_MONTH) + \
+                 (get_mcd_ticket_price(get_url_response(URL_TO_PARSE_MCD_TICKETS)) * TRAIN_TICKETS_PER_MONTH), 2)
 
 
 if __name__ == "__main__":
     print(calculate_transportation_index())
-

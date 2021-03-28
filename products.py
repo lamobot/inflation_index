@@ -2,6 +2,7 @@
 """This module returns index for housing sector"""
 
 from libs import get_url_response, write_logs
+from config import PRODUCTS_CSV_FILE
 import csv
 import re
 
@@ -10,7 +11,6 @@ def get_product_price(link: str, shop: str) -> float:
     soup = get_url_response(link)
     if soup is None:
         write_logs('unavailable product - {}'.format(link), 'ERROR')
-        raise Exception('unavailable product - ' + link)
     if shop == 'globus':
         return float(soup.select_one("div.item-card__content--right span.item-price__rub").text
                      + '.' +
@@ -70,11 +70,11 @@ def calculate_product_index() -> float:
     This function calculates product index and returns average price of products from globus, aushan and vprok shops
     """
     product_index = 0.0
-    for price in get_average_product_price(get_product_dict_from_csv('list.csv', 'vprok'),
-                                           get_product_dict_from_csv('list.csv', 'globus'),
-                                           get_product_dict_from_csv('list.csv', 'aushan')).values():
+    for price in get_average_product_price(get_product_dict_from_csv(PRODUCTS_CSV_FILE, 'vprok'),
+                                           get_product_dict_from_csv(PRODUCTS_CSV_FILE, 'globus'),
+                                           get_product_dict_from_csv(PRODUCTS_CSV_FILE, 'aushan')).values():
         product_index += price
-    return product_index
+    return round(product_index, 2)
 
 
 if __name__ == '__main__':

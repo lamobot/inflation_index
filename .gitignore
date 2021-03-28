@@ -4,7 +4,4 @@ model.mwb
 trash.py
 __pycache__
 .bak
-/tmp
-model.mwb.bak
 *.log
-links

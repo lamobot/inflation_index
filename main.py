@@ -3,17 +3,21 @@
 
 from transportation import calculate_transportation_index
 from housing_sector import calculate_housing_sector_index
+from products import calculate_product_index
+from config import INDEX_CSV_FILE
+import csv
 
 
-def main() -> tuple:
+def main() -> None:
     """
-    This function calculates indexes
-    :return: tuple of product, fuel and housing sector index
+    This function writes indexes to csv file
     """
-    return calculate_transportation_index() + calculate_housing_sector_index()
+    with open(INDEX_CSV_FILE, 'a', newline='\n') as csvfile:
+        record = csv.writer(csvfile, delimiter=',', quotechar='|')
+        record.writerow([calculate_transportation_index(), calculate_housing_sector_index(), calculate_product_index()])
 
 
 if __name__ == "__main__":
-    print(main())
+    main()
 
 

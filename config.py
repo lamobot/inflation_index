@@ -1,5 +1,8 @@
-# Constants
-HOUSING_SECTOR_BILL_FILE = 'tmp/bill.pdf'
+# STATIC FILES
+HOUSING_SECTOR_BILL_FILE = 'static_files/bill.pdf'
+PRODUCTS_CSV_FILE = 'static_files/list.csv'
+INDEX_CSV_FILE = 'static_files/index.csv'
+
 
 # URLs
 URL_TO_PARSE_FUEL = "https://auto.mail.ru/fuel/"
