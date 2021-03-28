@@ -15,8 +15,8 @@ def main() -> None:
     """
     This function writes indexes to csv file
     """
-    with open(INDEX_CSV_FILE, 'a', newline='\n') as csvfile:
-        record = csv.writer(csvfile, delimiter=',', quotechar='|')
+    with open(INDEX_CSV_FILE, 'a', newline='\n') as csv_file:
+        record = csv.writer(csv_file, delimiter=',')
         record.writerow([date.strftime("%Y-%m-%d"), calculate_transportation_index(),
                          calculate_housing_sector_index(), calculate_product_index()])
 
