@@ -4,6 +4,7 @@
 import logging
 import requests
 from bs4 import BeautifulSoup
+# TODO loguru
 
 logging.basicConfig(filename='script.log', filemode='w', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(funcName)s:  %(message)s')
