@@ -31,4 +31,5 @@ def get_url_response(url: str) -> object:
     response = requests.get(url)
     if response.status_code == 200:
         return BeautifulSoup(response.text, "html.parser")
+    write_logs(str(response), 'ERROR')
     return None

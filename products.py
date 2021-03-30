@@ -12,13 +12,19 @@ def get_product_price(link: str, shop: str) -> float:
     if soup is None:
         write_logs('unavailable product - {}'.format(link), 'ERROR')
     if shop == 'globus':
+        write_logs(f'The price for product {link} has been parsed successfully', 'INFO')
         return float(soup.select_one("div.item-card__content--right span.item-price__rub").text
                      + '.' +
                      soup.select_one("div.item-card__content--right span.item-price__kop").text)
     if shop == 'vprok':
+        if soup.select_one("span.js-price-rouble") is None:
+            write_logs(f'The price for product {link} has been parsed successfully', 'ERROR')
+            return None
+        write_logs(link, 'INFO')
         return float(soup.select_one("span.js-price-rouble").text +
                      soup.select_one("span.js-price-penny").text.replace(',', '.'))
     if shop == 'aushan':
+        write_logs(f'The price for product {link} has been parsed successfully', 'INFO')
         price = soup.select_one("div.fullPricePDP").text.replace(' ', '')
         price = re.search(r"\A\d+\.\d\d", price)
         return float(price.group())
@@ -30,7 +36,8 @@ def get_product_dict_from_csv(filename: str, shop: str) -> dict:
     for row in input_file:
         if row['shop_name'] == shop:
             product_price = get_product_price(row['product_url'], shop)
-            product_dict[row['product_name']] = product_price * int(row['counter'])
+            if product_price is not None:
+                product_dict[row['product_name']] = product_price * int(row['counter'])
     return product_dict
 
 
@@ -78,4 +85,7 @@ def calculate_product_index() -> float:
 
 
 if __name__ == '__main__':
+    print(get_product_dict_from_csv(PRODUCTS_CSV_FILE, 'vprok'))
+    print(get_product_dict_from_csv(PRODUCTS_CSV_FILE, 'globus'))
+    print(get_product_dict_from_csv(PRODUCTS_CSV_FILE, 'aushan'))
     print(calculate_product_index())
