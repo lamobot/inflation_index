@@ -12,19 +12,19 @@ def get_product_price(link: str, shop: str) -> float:
     if soup is None:
         write_logs('unavailable product - {}'.format(link), 'ERROR')
     if shop == 'globus':
-        write_logs(f'The price for product {link} has been parsed successfully', 'INFO')
+        write_logs(f'The price for product has been parsed successfully - {link}', 'INFO')
         return float(soup.select_one("div.item-card__content--right span.item-price__rub").text
                      + '.' +
                      soup.select_one("div.item-card__content--right span.item-price__kop").text)
     if shop == 'vprok':
         if soup.select_one("span.js-price-rouble") is None:
-            write_logs(f'The price for product {link} has been parsed successfully', 'ERROR')
+            write_logs(f'The price for product has not been found - {link} ', 'ERROR')
             return None
-        write_logs(link, 'INFO')
+        write_logs(f'The price for product has been parsed successfully - {link}', 'INFO')
         return float(soup.select_one("span.js-price-rouble").text +
                      soup.select_one("span.js-price-penny").text.replace(',', '.'))
     if shop == 'aushan':
-        write_logs(f'The price for product {link} has been parsed successfully', 'INFO')
+        write_logs(f'The price for product has been parsed successfully - {link}', 'INFO')
         price = soup.select_one("div.fullPricePDP").text.replace(' ', '')
         price = re.search(r"\A\d+\.\d\d", price)
         return float(price.group())
