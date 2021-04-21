@@ -5,4 +5,4 @@ trash.py
 __pycache__
 .bak
 *.log
-static_files/index.csv
+*/index.csv
