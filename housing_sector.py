@@ -55,8 +55,8 @@ def calculate_housing_sector_index() -> float:
     """
     This function calculates housing sector index and returns sum of electricity and housing service prices
     """
-    return get_housing_service_price(HOUSING_SECTOR_BILL_FILE) + \
-        get_electricity_price(get_url_response(URL_TO_PARSE_ELECTRICITY_PRICE))
+    return round(get_housing_service_price(HOUSING_SECTOR_BILL_FILE) + \
+                 get_electricity_price(get_url_response(URL_TO_PARSE_ELECTRICITY_PRICE)), 2)
 
 
 if __name__ == "__main__":
