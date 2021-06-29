@@ -29,7 +29,7 @@ def get_url_response(url: str) -> object:
     :return: response from server
     """
     response = requests.get(url)
-    if response.status_code == 200:
+    if response.status_code in (200, 301, 302):
         return BeautifulSoup(response.text, "html.parser")
     write_logs(str(response), 'ERROR')
     return None
