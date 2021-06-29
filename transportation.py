@@ -3,7 +3,7 @@
 
 import re
 from libs import write_logs, get_url_response
-from config import FUEL_LITTERS_PER_MONTH, TRAIN_TICKETS_PER_MONTH, URL_TO_PARSE_FUEL, URL_TO_PARSE_MCD_TICKETS
+from config import FUEL_LITTERS_PER_MONTH, TRAIN_TICKETS_PER_MONTH, URL_TO_PARSE_FUEL, MCD_PRICE
 
 
 def get_fuel_price(response: object, fuel_type: str = 'ai95') -> float:
@@ -26,26 +26,17 @@ def get_fuel_price(response: object, fuel_type: str = 'ai95') -> float:
     return float(fuel_price.group(0).split(',')[0].split(':')[1])
 
 
-def get_mcd_ticket_price(response: object) -> float:
-    """
-    This function returns MCD ticket prices for suburbs
-    :param response:
-    :return:
-    """
-    pattern = re.compile(r'«Пригород» – ')
-    result_string = response.find(text=pattern)
-    write_logs('MCD price index has been calculated successfully', 'INFO')
-    return float(re.findall(r'\d+', str(result_string.next_element))[0])
-
-
 def calculate_transportation_index() -> float:
     """
     This function calculates transportation index and returns sum of fuel and mcd tickets prices per month
     """
     return round((get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'ai95') * FUEL_LITTERS_PER_MONTH) + \
                  (get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'dt') * FUEL_LITTERS_PER_MONTH) + \
-                 (get_mcd_ticket_price(get_url_response(URL_TO_PARSE_MCD_TICKETS)) * TRAIN_TICKETS_PER_MONTH), 2)
+                 (MCD_PRICE * TRAIN_TICKETS_PER_MONTH), 2)
 
 
 if __name__ == "__main__":
+    print(MCD_PRICE * TRAIN_TICKETS_PER_MONTH)
+    print(get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'ai95') * FUEL_LITTERS_PER_MONTH)
+    print(get_fuel_price(get_url_response(URL_TO_PARSE_FUEL), 'dt') * FUEL_LITTERS_PER_MONTH)
     print(calculate_transportation_index())

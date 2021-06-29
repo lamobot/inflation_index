@@ -28,8 +28,9 @@ def get_url_response(url: str) -> object:
     :param url: link to website which we're going to parse
     :return: response from server
     """
-    response = requests.get(url)
-    if response.status_code in (200, 301, 302):
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
         return BeautifulSoup(response.text, "html.parser")
     write_logs(str(response), 'ERROR')
     return None
