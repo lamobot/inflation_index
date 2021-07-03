@@ -21,5 +21,5 @@ ELECTRICITY_COUNTER: int = 260
 
 # Static prices
 MCD_PRICE: int = 50
-ELECTRICITY_PRICE: float = 4.01
+ELECTRICITY_PRICE: float = 4.29
 
